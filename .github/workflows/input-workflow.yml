@@ -1,5 +1,6 @@
 name: Manual Trigger Workflow
-
+env:
+    REPO_URL: ${{ github.repository }}
 on:
     workflow_dispatch:
         inputs:
@@ -7,6 +8,9 @@ on:
                 description: 'Branch name to clone'
                 required: true
                 default: 'main'
+                type: choice
+                options:
+                    - $(git ls-remote --heads $REPO_URL | awk '{print $2}' | sed 's|refs/heads/||')
 
 jobs:
     clone-repo:
@@ -15,7 +19,7 @@ jobs:
             - name: Verify branch exists
               run: |
                 echo "Checking if branch '${{ github.event.inputs.branch }}' exists..."
-                if git ls-remote --heads origin ${{ github.event.inputs.branch }} | grep -q ${{ github.event.inputs.branch }}; then
+                if git ls-remote --heads $REPO_URL ${{ github.event.inputs.branch }} | grep -q ${{ github.event.inputs.branch }}; then
                     echo "Branch '${{ github.event.inputs.branch }}' exists."
                 else
                     echo "Branch '${{ github.event.inputs.branch }}' does not exist. Available branches are:"
