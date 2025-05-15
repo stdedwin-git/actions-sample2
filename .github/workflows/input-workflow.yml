@@ -3,14 +3,6 @@ env:
     REPO_URL: ${{ github.repository }}
 on:
     workflow_dispatch:
-        inputs:
-            branch:
-                description: 'Branch name to clone'
-                required: true
-                default: 'main'
-                type: choice
-                options:
-                    - $(git ls-remote --heads $REPO_URL | awk '{print $2}' | sed 's|refs/heads/||')
 
 jobs:
     clone-repo:
