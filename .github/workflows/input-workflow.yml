@@ -15,4 +15,12 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v3
               with:
-                    ref: ${{ github.event.inputs.branch }}
+                  ref: ${{ github.event.inputs.branch }}
+
+            - name: Verify branch exists
+              run: |
+                  if ! git ls-remote --heads origin ${{ github.event.inputs.branch }}; then
+                      echo "Branch '${{ github.event.inputs.branch }}' does not exist. Available branches are:"
+                      git ls-remote --heads origin | awk '{print $2}' | sed 's|refs/heads/||'
+                      exit 1
+                  fi
